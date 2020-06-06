@@ -1,0 +1,15 @@
+image: node:13
+
+stages:
+  - build_deploy
+
+build_deploy:
+  variables:
+    SSH_URL: "sshUrl"
+    PROJECT_PATH: "/dockerPath/social-poster"
+  stage: build_deploy
+  only:
+    - qa
+  script:
+    - rsync -avhrPO -e 'ssh -p 4022'  --delete *  sshUrl:/dockerPath/social-poster/
+    - ssh -p 4022 sshUrl 'sudo docker-compose -f /dockerPath/social-poster/docker-compose.yml up --build -d '
